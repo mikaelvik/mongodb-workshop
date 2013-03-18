@@ -1,0 +1,227 @@
+
+# MongoDB-workshop
+
+---
+
+# Agenda  NoSQL 2013-03-19
+
+## Kjapp intro
+
+Neste slide...
+
+## Workshopping
+
+Lære basics vha REPL-workout
+Java-køding
+
+Start med:
+\\
+# Hent ned kode
+$ git clone https://github.com/mikaelvik/mongodb-workshop
+
+# Fyre opp mongo
+$ mongod & # start server i bakgrunn
+$ mongo workshop # start klient mot databasa 'workshop'
+\\
+
+---
+
+# Stikkord
+
+"MongoDB (from "humongous") is a scalable, high-performance, open source NoSQL database. Written in C++"
+
+## Funksjonalitet (fritt oversatt, nesten til norsk)
+- Dokument-orientert; JSON (BSON), dynamiske skjema, nøsting
+- Full indeks-støtte; indeksér på akkurat det du vil
+- Replikering og høg tilgjengelighet (over LAN eller WAN)
+- Auto-sharding; skaler horisontalt uten å tenke på funksjonalitet
+- Spørrespråk; rike dokument-baserte spørringar
+- Raske oppdateringar, in-place, automatiske modifiers
+- Map/Reduce; fleksibel aggregering og data-prosessering
+
+## Mellom anna brukt av
+- FourSquare, CERN, Craigslist, Disney, MTV Networks, SAP, EA
+
+
+---
+
+# Dokument-format
+
+Gitt at vi allereie har oppretta data:
+
+\\
+$ mongo workshop
+> printjson( db.dudes.findOne({name: /^A/}) )
+{
+  "_id" : ObjectId("5140636769a3b73b5d997e99"),
+  "name" : "Andreas Heim",
+  "skill" : 4300,
+  "employed_since" : ISODate("2008-01-31T00:00:00Z"),
+  "famous_for" : [
+    "Bekk Band", "Medmenneske", "RoboCup"
+  ],
+  "info" : {
+  	"seniority" : "Akkurat passe",
+  	"branch" : "Tech",
+  	"group" : "NoSQL"
+  }
+}
+\\
+
+JSON...
+Nøsting av dokument i dokument (info)
+Spesial-typar:
+- ObjectId: &&&& skriv litt om id-generering
+- ISODate: &&& skriv litt om
+---
+
+# Opprette data
+
+På tide å faktisk opprette og spørre mot data, sjekk filene:
+- src/js/insert-dudes.js
+- src/js/query-dudes.js
+
+Legg inn eit innslag (samme som printa på forrige slide..)
+\\
+> db.dudes.insert({
+  "name" : "Andreas Heim",
+  "skill" : 4300,
+  "employed_since" : ISODate("2008-01-31T00:00:00Z"),
+  "famous_for" : [
+    "Bekk Band", "Medmenneske", "RoboCup"
+  ],
+  "info" : {
+    "seniority" : "Akkurat passe",
+    "branch" : "Tech",
+    "group" : "NoSQL"
+  }
+});
+\\
+
+Tungvint og verbost å skulle gjere det slik. Ha tålmod...
+
+---
+
+# Data-typar og inspeksjon
+
+Informasjon og utforsking
+\\
+show collections
+db.dudes.count()
+db.dudes.help()
+db.dudes #...
+\\
+
+Javascript...
+\\
+> typeof db
+object
+> typeof db.dudes
+object
+> typeof db.dudes.insert
+function
+\\
+
+Sjekk implementasjon ved å angi funksjon uten parantesar (som i Python)
+\\
+> db.dudes.insert
+function (obj, _allow_dot) {
+  if (!obj) {
+    throw "no object passed to insert!";
+  }
+  ...
+\\
+
+---
+
+# Legg inn meir data...
+
+Stress å skrive json, lag ein funksjon:
+\\
+// src/main/js/insert-dudes.js
+> function insertDude(name, skill, employed_since, famous_for, info) {
+  db.dudes.insert({
+    name: name,
+    skill: skill,
+    employed_since: ISODate(employed_since),
+    famous_for: famous_for,
+    info: info
+  });
+}
+> insertDude # for å inspisere...
+\\
+
+Legg inn fleire dudes
+\\
+> insertDude(
+  "Mikael Vik", 667, "2006-06-13", ["Sunnmøring", "Python", "Americana"], {branch: "Tech", group: "NoSQL"}
+);
+> insertDude(
+  "Ketil Velle", 6200, "1982-03-03", ["Sunnmøring", "Konsertgjengar"], {branch: "Tech", group: "NoSQL"}
+);
+> insertDude(
+  "Olav Folkestad", 666666, "2000-01-01", ["Sjef", "Bekk Band"]
+);
+\\
+
+---
+
+# Spørringar og uthenting av data
+
+Kan sjølvsagt spørre vha id
+\\
+// src/main/js/query-dudes.js
+db.dudes.find({ "_id" : ObjectId("4d0ada1fbb30773266f39fe4") })
+\\
+
+Meir interessant
+\\
+// Match på fleire felt
+db.dudes.find({
+  name: /i/,
+  skill : { $gt: 1000 }
+});
+// Inkluder/utelukk felt
+db.dudes.find(
+  { name: /i/, skill : { $gt : 1000 } },
+  { _id: 0, name: 1, skill: 1, info: 1}
+);
+// Kriterier vha objekt
+var skill_range = {};
+skill_range['$gt'] = 667;
+skill_range['$lt'] = 100000;
+db.dudes.find({skill: skill_range}, {_id: 0, name: 1});
+\\
+
+---
+
+# Ressursar
+
+Workshop-kode
+- https://github.com/mikaelvik/mongodb-workshop
+
+MongoDB
+- http://docs.mongodb.org/manual/
+
+Dropwizard
+- http://dropwizard.codahale.com/
+
+Jongo
+- http://jongo.org/
+
+
+
+---
+# Applikasjon, huskeliste
+
+Todo:
+x generell resource
+x koble til mongodb-basa
+x hente ut data vha rest-kall
+X sjekke om der e data i basa...
+- populere databasa (python?)
+- mappe json til objekt?
+
+- legg til kallenavn...
+---
+
