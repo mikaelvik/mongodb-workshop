@@ -24,4 +24,6 @@ function updateDude(name, languages) {
 };
 
 updateDude(/Andreas/, [{name: "Java", knows: false}, {name: "Ruby", knows: true}]);
+updateDude(/Ketil/, [{name: "Norsk", knows: true}, {name: "Java", knows: true}, {name: "Tysk", knows:false}])
+updateDude(/Charlie/, [{name: "JavaScript", knows: true}])
 // legg gjerne til språk for fleire dudes
