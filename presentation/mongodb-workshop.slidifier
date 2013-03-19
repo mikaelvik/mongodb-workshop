@@ -74,8 +74,12 @@ $ mongo workshop
 JSON...
 Nøsting av dokument i dokument (info)
 Spesial-typar:
-- ObjectId: &&&& skriv litt om id-generering
-- ISODate: &&& skriv litt om
+- ObjectId(...):
+-- 4-byte timestamp,
+-- 3-byte machine identifier,
+-- 2-byte process id, and
+-- 3-byte counter, starting with a random value.
+- ISODate: JavaScript
 ---
 
 # Opprette data
@@ -117,7 +121,7 @@ db.dudes.help()
 db.dudes #...
 \\
 
-Javascript...
+JavaScript...
 \\
 > typeof db
 object
@@ -265,7 +269,7 @@ Legg til programmerings-språk under info
 
 # Grav endå litt djupare
 
-Korleis finne ein programmerar som kan java godt?
+Korleis finne ein programmerar som kan Java godt?
 \\
 // Ikkje sånn
 > dd.find({
