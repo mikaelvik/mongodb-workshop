@@ -25,7 +25,8 @@ define(['jquery', 'underscore'], function($, _, when) {
             $.ajax({
                 url: '/rest/dudes',
                 dataType: 'json',
-                data: data,
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
                 type: 'POST'
             }).then(function(response) {
                 updateGUI();

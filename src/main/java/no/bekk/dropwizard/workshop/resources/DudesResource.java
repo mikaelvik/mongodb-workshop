@@ -40,7 +40,7 @@ public class DudesResource extends BasicJongoResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response dudeInsert(@Valid Dude dude) {
         System.out.println("dude = " + dude);
 
