@@ -7,6 +7,7 @@ import no.bekk.dropwizard.workshop.resources.MongoResource;
 
 import com.mongodb.MongoClient;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
@@ -21,6 +22,7 @@ public class MongoWorkshopService extends Service<MongoWorkshopConfiguration> {
 
     @Override public void initialize(Bootstrap<MongoWorkshopConfiguration> bootstrap) {
         bootstrap.setName("mongo-workshop");
+        bootstrap.addBundle(new AssetsBundle("/assets/", "/static/"));
     }
 
     @Override public void run(MongoWorkshopConfiguration configuration, Environment environment) throws Exception {
@@ -29,6 +31,7 @@ public class MongoWorkshopService extends Service<MongoWorkshopConfiguration> {
         environment.addResource(new MongoResource(mongoClient));
         environment.addResource(new JongoResource(mongoClient));
         environment.addResource(new DudesResource(mongoClient));
+
         environment.addHealthCheck(new MongoHealthCheck(mongoClient));
     }
 
