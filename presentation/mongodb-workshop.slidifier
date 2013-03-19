@@ -439,3 +439,23 @@ Jongo (Java+Mongo)
 Dropwizard
 - http://dropwizard.codahale.com/
 
+Opphavsmann:
+- Mikael Vik (mikael.vik@gmail.com)
+---
+
+# Veien vidare
+
+Sjå nærmare på:
+- Sharding
+- Indeksering
+- Aggregering
+- Håndtering av last/samtidige operasjonar
+
+Fiks:
+- dropp fat jar
+- mindre sårbar mapping frå dudes til Dude
+- vise oppdatert liste av dudes etter POST
+
+Kanskje sjå nærmare på:
+- Migrering av datamodell
+-
