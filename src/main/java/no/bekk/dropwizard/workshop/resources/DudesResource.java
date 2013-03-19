@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import com.mongodb.MongoClient;
+import com.mongodb.WriteResult;
 
 /**
  * @author Mikael Vik (BEKK) - mikael.vik@bekk.no
@@ -30,9 +31,8 @@ public class DudesResource extends BasicJongoResource {
     @Path("/all")
     public Iterable<Dude> all() {
         // DW #1
-        // di kode her
-        // collection("workshop", "dudes")...
-        return null;
+
+        return collection("workshop", "dudes").find().limit(20).as(Dude.class);
     }
 
     @POST
@@ -41,11 +41,11 @@ public class DudesResource extends BasicJongoResource {
         // DW #2
         System.out.println("dude = " + dude);
 
-        // di kode her
+        WriteResult save = collection("workshop", "dudes").save(dude);
 
         return Response.created(
                 UriBuilder.fromResource(DudesResource.class)
-                        .build( /* di kode kanskje også her? */ )
+                        .build("id", save.getField("_id"))
         ).build();
     }
 
@@ -53,10 +53,9 @@ public class DudesResource extends BasicJongoResource {
     @Path("/filter")
     public Iterable<Dude> dudeQuery(@QueryParam("q") String query) {
         // DW #3
-
         System.out.println("query = " + query);
         return collection("workshop", "dudes")
-                .find( /* di kode her */ )
+                .find("{name: {$regex: #}}", query)
                 .as(Dude.class);
     }
 
