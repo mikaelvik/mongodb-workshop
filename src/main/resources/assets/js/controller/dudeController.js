@@ -5,7 +5,7 @@ define(['jquery', 'underscore'], function($, _, when) {
 
         var fetchDudes = function() {
             return $.ajax({
-                url: '/rest/dudes',
+                url: '/rest/dudes/all',
                 dataType: 'json'
             });
         };
@@ -13,9 +13,11 @@ define(['jquery', 'underscore'], function($, _, when) {
         var updateGUI = function() {
             $(dudeElement).empty();
             fetchDudes().then(function(response) {
-                _.each(response, function(item) {
+                _.each(response, function(items) {
                     // TODO: Add info like you want...
-                    $(dudeElement).append(item);
+                    _.each(items, function(item) {
+                        $(dudeElement).append(item);
+                    });
                 });
             });
         };

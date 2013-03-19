@@ -33,21 +33,22 @@ public class DudesResource extends BasicJongoResource {
     }
 
     @GET
-    public Dude dudeQuery(@QueryParam("name") String name) {
+    public Iterable<Dude> dudeQuery(@QueryParam("name") String name) {
         return collection("workshop", "dudes")
-                .findOne() // di kode her
+                .find( /* di kode her */ )
                 .as(Dude.class);
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response dudeInsert(@Valid Dude dude) {
         System.out.println("dude = " + dude);
 
         // di kode her
 
         return Response.created(
-                UriBuilder.fromResource(DudesResource.class).build()
+                UriBuilder.fromResource(DudesResource.class)
+                        .build( /* di kode kanskje også her? */ )
         ).build();
     }
 
