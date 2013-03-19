@@ -299,7 +299,9 @@ Sjekk dokumentasjon for operatorar
 - http://docs.mongodb.org/manual/reference/operator/
 
 Oppgåver:
+- finne en dude som har languages
 - finne alle som kan programmeringsspråket Java godt
+-- bruk $elemMatch
 - TODO
 
 ---
