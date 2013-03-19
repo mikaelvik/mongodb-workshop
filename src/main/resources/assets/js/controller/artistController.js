@@ -11,6 +11,7 @@ define(['jquery', 'underscore'], function($, _, when) {
         };
 
         var updateGUI = function() {
+            $(artistsElement).empty();
             fetchArtists().then(function(response) {
                 _.each(response, function(item) {
                     // TODO: Add info like you want...
