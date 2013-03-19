@@ -1,27 +1,27 @@
 define(['jquery', 'underscore'], function($, _, when) {
 
-    var artistsElement;
+    var dudeElement;
     var controller = function() {
 
-        var fetchArtists = function() {
+        var fetchDudes = function() {
             return $.ajax({
-                url: '/dudes',
+                url: '/rest/dudes',
                 dataType: 'json'
             });
         };
 
         var updateGUI = function() {
-            $(artistsElement).empty();
-            fetchArtists().then(function(response) {
+            $(dudeElement).empty();
+            fetchDudes().then(function(response) {
                 _.each(response, function(item) {
                     // TODO: Add info like you want...
-                    $(artistsElement).append(item);
+                    $(dudeElement).append(item);
                 });
             });
         };
         var post = function(data) {
             $.ajax({
-                url: '/dudes',
+                url: '/rest/dudes',
                 dataType: 'json',
                 data: data,
                 type: 'POST'
@@ -46,8 +46,8 @@ define(['jquery', 'underscore'], function($, _, when) {
                 return this;
             },
             render: function() {
-                artistsElement = $(controller.elem).find('#artists');
-                bindPostForm($(controller.elem).find('#postArtistForm'));
+                dudeElement = $(controller.elem).find('#dudes');
+                bindPostForm($(controller.elem).find('#postDudeForm'));
                 updateGUI();
             }
         };

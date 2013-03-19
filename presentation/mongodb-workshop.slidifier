@@ -335,7 +335,7 @@ $ ./build-and-start-server.sh
 # for restart: Ctrl+C, Ctrl+P, <enter>
 \\
 
-Gå til localhost:8080/static/
+Gå til localhost:8080/index.html
 
 Åpne prosjektet i din favoritt-editor
 

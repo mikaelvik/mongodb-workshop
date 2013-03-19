@@ -27,6 +27,12 @@ public class DudesResource extends BasicJongoResource {
     }
 
     @GET
+    @Path("/all")
+    public Iterable<Dude> all() {
+        return collection("workshop", "dudes").find().limit(100).as(Dude.class);
+    }
+
+    @GET
     public Dude dudeQuery(@QueryParam("name") String name) {
         return collection("workshop", "dudes")
                 .findOne() // di kode her

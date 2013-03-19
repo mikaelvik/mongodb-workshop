@@ -1,2 +1,5 @@
 mongoHost: localhost
 mongoPort: 27017
+
+http:
+  rootPath: /rest/*

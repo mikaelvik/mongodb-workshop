@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Promise example</title>
+    <title>MongoDB Workshop</title>
     <script type="text/javascript">
       var buildTimestamp = new Date().getTime();
       var require = {
@@ -19,20 +19,19 @@
   <body>
     <header>MongoDB workshop</header>
     <section id="main" role="main" >
-      <div id="artists"> DummyArtists - should be overwritten at start...</div>
-      <hr />
-      <div id="postArtist"> 
-        <form id="postArtistForm" method="POST">
-          <form>
-            <fieldset>
-              <legend>Send inn:</legend>
-              <div><label for="name">Name:</label> <input type="text" id="name" name="name" /></div>
-              <div><label for="skill">Skill</label> <input type="text" id="skill" name="skill" /></div>
-              <div><label for="famous_for">Famous for:</label> <input type="text" id="famous_for" name="famous_for" /></div>
-              <button type="submit" class="submitButton">Send inn data</button>
-            </fieldset>
+      <div id="postDude">
+        <form id="postDudeForm" method="POST">
+          <fieldset>
+            <legend>Send inn:</legend>
+            <div><label for="name">Name:</label> <input type="text" id="name" name="name" /></div>
+            <div><label for="skill">Skill</label> <input type="text" id="skill" name="skill" /></div>
+            <div><label for="famous_for">Famous for:</label> <input type="text" id="famous_for" name="famous_for" /></div>
+            <button type="submit" class="submitButton">Send inn data</button>
+          </fieldset>
         </form>
       </div>
+      <hr />
+      <div id="dudes"> DummyDudes - should be overwritten at start...</div>
     </section>
   </body>
 </html>

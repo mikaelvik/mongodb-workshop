@@ -1,4 +1,4 @@
-define(['controller/artistController'], function(artistControllerInit) {
+define(['controller/dudeController'], function(dudeControllerInit) {
 
     var controller = function() {
 
@@ -6,11 +6,11 @@ define(['controller/artistController'], function(artistControllerInit) {
             return {
                 init: function(elem) {
                     controller.elem = $(elem);
-                    controller.artistController = artistControllerInit("#main");
+                    controller.dudeController = dudeControllerInit("#main");
                     return this;
                 },
                 run: function() {
-                    controller.artistController.render();
+                    controller.dudeController.render();
                 }
             };
         };

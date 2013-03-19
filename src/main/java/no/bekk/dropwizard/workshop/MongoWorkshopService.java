@@ -22,7 +22,7 @@ public class MongoWorkshopService extends Service<MongoWorkshopConfiguration> {
 
     @Override public void initialize(Bootstrap<MongoWorkshopConfiguration> bootstrap) {
         bootstrap.setName("mongo-workshop");
-        bootstrap.addBundle(new AssetsBundle("/assets/", "/static/"));
+        bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
     }
 
     @Override public void run(MongoWorkshopConfiguration configuration, Environment environment) throws Exception {
