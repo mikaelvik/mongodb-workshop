@@ -29,21 +29,16 @@ public class DudesResource extends BasicJongoResource {
     @GET
     @Path("/all")
     public Iterable<Dude> all() {
-        return collection("workshop", "dudes").find().limit(100).as(Dude.class);
-    }
-
-    @GET
-    @Path("/filter")
-    public Iterable<Dude> dudeQuery(@QueryParam("q") String query) {
-        System.out.println("query = " + query);
-        return collection("workshop", "dudes")
-                .find( /* di kode her */ )
-                .as(Dude.class);
+        // DW #1
+        // di kode her
+        // collection("workshop", "dudes")...
+        return null;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response dudeInsert(@Valid Dude dude) {
+        // DW #2
         System.out.println("dude = " + dude);
 
         // di kode her
@@ -52,6 +47,17 @@ public class DudesResource extends BasicJongoResource {
                 UriBuilder.fromResource(DudesResource.class)
                         .build( /* di kode kanskje også her? */ )
         ).build();
+    }
+
+    @GET
+    @Path("/filter")
+    public Iterable<Dude> dudeQuery(@QueryParam("q") String query) {
+        // DW #3
+
+        System.out.println("query = " + query);
+        return collection("workshop", "dudes")
+                .find( /* di kode her */ )
+                .as(Dude.class);
     }
 
 }

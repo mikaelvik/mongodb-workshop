@@ -50,8 +50,14 @@ Presentasjonen ligg her:
 
 # Dokument-format
 
-Gitt at vi allereie har oppretta data:
+Om du gløymte det tidligare:
+\\
+$ git clone https://github.com/mikaelvik/mongodb-workshop
+$ mongod & # start server i bakgrunn
+$ mongo workshop # start klient mot databasa 'workshop'
+\\
 
+Gitt at vi allereie har oppretta data:
 \\
 $ mongo workshop
 > printjson( db.dudes.findOne({name: /^A/}) )
@@ -70,16 +76,13 @@ $ mongo workshop
   }
 }
 \\
+JSON... Nøsting av dokument i dokument (info)
+ObjectId(...):
+--- 4-byte timestamp,
+--- 3-byte machine identifier,
+--- 2-byte process id, and
+--- 3-byte counter, starting with a random value.
 
-JSON...
-Nøsting av dokument i dokument (info)
-Spesial-typar:
-- ObjectId(...):
--- 4-byte timestamp,
--- 3-byte machine identifier,
--- 2-byte process id, and
--- 3-byte counter, starting with a random value.
-- ISODate: JavaScript
 ---
 
 # Opprette data
@@ -90,7 +93,7 @@ På tide å faktisk opprette og spørre mot data, sjekk filene:
 - src/js/3-update-dudes.js
 - src/js/4-generate-dudes.js
 
-Legg inn eit innslag (samme som printa på forrige slide..)
+Legg inn eit innslag (samme som vart printa på forrige slide..)
 \\
 > db.dudes.insert({
   "name" : "Andreas Heim",
@@ -107,7 +110,7 @@ Legg inn eit innslag (samme som printa på forrige slide..)
 });
 \\
 
-Tungvint og verbost å skulle gjere det slik. Ha tålmod...
+Tungvint og verbost å måtte gjenta heile json-strukturen for kvar insert (ha tålmod...)
 
 ---
 
@@ -115,10 +118,10 @@ Tungvint og verbost å skulle gjere det slik. Ha tålmod...
 
 Informasjon og utforsking
 \\
-show collections
-db.dudes.count()
-db.dudes.help()
-db.dudes #...
+> show collections
+> db.dudes.count()
+> db.dudes.help()
+> db.dudes #...
 \\
 
 JavaScript...
@@ -190,11 +193,15 @@ Meir interessant
   name: /i/,
   skill : { $gt: 1000 }
 });
+\\
+\\
 // Inkluder/utelukk felt
 > db.dudes.find(
   { name: /i/, skill : { $gt : 1000 } },
   { _id: 0, name: 1, skill: 1, info: 1}
 );
+\\
+\\
 // Kriterier vha objekt
 > var skill_range = {};
 > skill_range['$gt'] = 667;
@@ -209,20 +216,25 @@ Meir interessant
 \\
 > var dd = db.dudes;
 > var fields = {_id: 0, name: 1, skill: 1, famous_for: 1, info: 1};
-
+\\
+\\
 // Eksakt treff
 > dd.find({famous_for: "Sunnmøring"}, fields);
-
+\\
+\\
 // Delvis treff
 > dd.find({famous_for: /Bekk/}, fields);
-
+\\
+\\
 // Alle
 > dd.find({famous_for: { $all: ["Sunnmøring", "Bekk"]}}, fields);
-
+\\
+\\
 // Subdokument
 > dd.find({"info.branch": "Tech"}, fields);
 > dd.find({"info.branch": "Tech", "info.group": "NoSQL" }, fields);
-
+\\
+\\
 // Boolske operatorar
 > dd.find(
   { $or : [
@@ -232,6 +244,20 @@ Meir interessant
   fields
 );
 \\
+
+---
+
+# Oppgåve-løysing #1
+
+Sjekk dokumentasjon for operatorar
+- http://docs.mongodb.org/manual/reference/operator/
+
+Oppgåver:
+- finne dudes utan info
+- finne dudes som er famous_for et eller anna med Bekk
+- ikkje vise namn og info
+- TODO
+
 ---
 
 # Endre og legge til data
@@ -267,6 +293,17 @@ Legg til programmerings-språk under info
 \\
 ---
 
+# Oppgåve-løysing #2
+
+Sjekk dokumentasjon for operatorar
+- http://docs.mongodb.org/manual/reference/operator/
+
+Oppgåver:
+- finne alle som kan programmeringsspråket Java godt
+- TODO
+
+---
+
 # Grav endå litt djupare
 
 Korleis finne ein programmerar som kan Java godt?
@@ -277,6 +314,11 @@ Korleis finne ein programmerar som kan Java godt?
   "info.languages.knows": true
 });
 \\
+
+Dette gir treff for alle som:
+- har Java som språk, og
+- kan eit språk godt...
+
 
 Må sørge for at treffa matchar for samme element
 
@@ -302,37 +344,40 @@ Når ein likevel har behov for å gjere det er det anbefalt å gjere det slik:
 
 \\
 // Konstruksjon for referanse
-{ $ref: "collection_name", $id: "reference_id }
-
+{ $ref: "collection_name", $id: "reference_id" }
+\\
+\\
 // Oppdater dokument
-db.dudes.update(
+> db.dudes.update(
   { name: /Mikael/ },
   { $set: { county: { $ref: "counties", $id: "mr" } } }
 );
-
+\\
+\\
 // Hent ut eit dokument
-var mikael = db.towns.find( { name: /Mikael/ } );
-
+> var mikael = db.towns.find( { name: /Mikael/ } );
+\\
+\\
 // Om du veit kva collections som er referert:
-db.counties.findOne( { _id: mikael.county.$id } );
+> db.counties.findOne( { _id: mikael.county.$id } );
 // Hent referert dokument vha JavaScript:
-db[ mikael.county.$ref ].findOne({ _id: mikael.county.$id });
+> db[ mikael.county.$ref ].findOne({ _id: mikael.county.$id });
 \\
 
 ---
 
 # Dropwizard
 
-Oppgåve:
-- uthenting av alle 'dudes'
-- uthenting av dudes vha filtrering
-- persistering av dude
+Oppgåver:
+- DW #1: uthenting av alle 'dudes'
+- DW #2: uthenting av dudes vha filtrering
+- DW #3: persistering av dude
 
 Fyr opp applikasjonen mongodb-workshop
 \\
 $ ./build-and-start-server.sh
 # mvn package && java -jar target/mongodb-tutorial-1.0-SNAPSHOT.jar server mongodb-workshop-local.yml
-# for restart: Ctrl+C, Ctrl+P, <enter>
+# for restart: Ctrl+C, Ctrl+P, <enter> (uten å vente)
 \\
 
 Gå til localhost:8080/index.html
@@ -372,6 +417,8 @@ Opprett indeks og vis detaljar på nytt
 );
 > db.dudes.find( query ).explain();
 \\
+
+---
 
 # Ressursar
 
