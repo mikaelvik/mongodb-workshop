@@ -9,22 +9,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.mongodb.MongoClient;
-import org.jongo.Jongo;
-import org.jongo.MongoCollection;
 
 /**
  * @author Mikael Vik (BEKK) - mikael.vik@bekk.no
  */
 @Path("/jongo")
 @Produces(MediaType.APPLICATION_JSON)
-public class JongoResource {
-
-    private static final String FIELDS_SKIP_ID = "{_id: 0}";
-
-    private final MongoClient mongoClient;
+public class JongoResource extends BasicJongoResource {
 
     public JongoResource(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
+        super(mongoClient);
     }
 
     @GET
@@ -46,14 +40,6 @@ public class JongoResource {
                 .find("{name: {$regex: #}}", name)
                 .fields(FIELDS_SKIP_ID)
                 .as(Map.class);
-    }
-
-    private MongoCollection collection(String dbname, String collectionName) {
-        return getDB(dbname).getCollection(collectionName);
-    }
-
-    private Jongo getDB(String dbname) {
-        return new Jongo(mongoClient.getDB(dbname));
     }
 
 }

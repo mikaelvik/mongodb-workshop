@@ -1,6 +1,7 @@
 package no.bekk.dropwizard.workshop;
 
 import no.bekk.dropwizard.workshop.health.MongoHealthCheck;
+import no.bekk.dropwizard.workshop.resources.DudesResource;
 import no.bekk.dropwizard.workshop.resources.JongoResource;
 import no.bekk.dropwizard.workshop.resources.MongoResource;
 
@@ -27,6 +28,7 @@ public class MongoWorkshopService extends Service<MongoWorkshopConfiguration> {
 
         environment.addResource(new MongoResource(mongoClient));
         environment.addResource(new JongoResource(mongoClient));
+        environment.addResource(new DudesResource(mongoClient));
         environment.addHealthCheck(new MongoHealthCheck(mongoClient));
     }
 
