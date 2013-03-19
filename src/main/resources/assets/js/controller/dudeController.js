@@ -24,8 +24,9 @@ define(['jquery', 'underscore'], function($, _, when) {
                 _.each(response, function(items) {
                     // TODO: Add info like you want...
                     _.each(items, function(item) {
-                        $(dudeElement).append(item);
+                        $(dudeElement).append(item).append(';');
                     });
+                    $(dudeElement).append('<br/>');
                 });
             });
         };
