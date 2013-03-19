@@ -10,6 +10,14 @@ define(['jquery', 'underscore'], function($, _, when) {
             });
         };
 
+        var fetchFilteredDudes = function(query) {
+            return $.ajax({
+                url: '/rest/dudes/filter',
+                dataType: 'json',
+                data: {q: query}
+            });
+        };
+
         var updateGUI = function() {
             $(dudeElement).empty();
             fetchDudes().then(function(response) {
@@ -43,6 +51,21 @@ define(['jquery', 'underscore'], function($, _, when) {
                 post(data);
             });
         }
+
+        function bindFilterForm (form) {
+            $(form).submit(function(e) {
+                e.preventDefault();
+                $(dudeElement).empty();
+
+                var query = $(this).find('input').val();
+                fetchFilteredDudes(query).then(function(items) {
+                    // TODO: Add info like you want...
+                    _.each(items, function(item) {
+                        $(dudeElement).append(item);
+                    });
+                });
+            });
+        }
         return {
             init: function(elem) {
                 controller.elem = $(elem);
@@ -51,6 +74,7 @@ define(['jquery', 'underscore'], function($, _, when) {
             render: function() {
                 dudeElement = $(controller.elem).find('#dudes');
                 bindPostForm($(controller.elem).find('#postDudeForm'));
+                bindFilterForm($(controller.elem).find('#filterDudeForm'));
                 updateGUI();
             }
         };

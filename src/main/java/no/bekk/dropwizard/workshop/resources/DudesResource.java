@@ -33,7 +33,9 @@ public class DudesResource extends BasicJongoResource {
     }
 
     @GET
-    public Iterable<Dude> dudeQuery(@QueryParam("name") String name) {
+    @Path("/filter")
+    public Iterable<Dude> dudeQuery(@QueryParam("q") String query) {
+        System.out.println("query = " + query);
         return collection("workshop", "dudes")
                 .find( /* di kode her */ )
                 .as(Dude.class);
