@@ -29,7 +29,7 @@ public class DudesResource extends BasicJongoResource {
     @GET
     public Dude dudeQuery(@QueryParam("name") String name) {
         return collection("workshop", "dudes")
-                .findOne()
+                .findOne() // di kode her
                 .as(Dude.class);
     }
 

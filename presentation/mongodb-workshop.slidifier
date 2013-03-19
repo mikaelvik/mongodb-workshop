@@ -318,7 +318,60 @@ db.counties.findOne( { _id: mikael.county.$id } );
 // Hent referert dokument vha JavaScript:
 db[ mikael.county.$ref ].findOne({ _id: mikael.county.$id });
 \\
+
 ---
+
+# Dropwizard
+
+Oppgåve:
+- uthenting av alle 'dudes'
+- uthenting av dudes vha filtrering
+- persistering av dude
+
+Fyr opp applikasjonen mongodb-workshop
+\\
+$ ./build-and-start-server.sh
+# mvn package && java -jar target/mongodb-tutorial-1.0-SNAPSHOT.jar server mongodb-workshop-local.yml
+# for restart: Ctrl+C, Ctrl+P, <enter>
+\\
+
+Gå til localhost:8080/static/
+
+Åpne prosjektet i din favoritt-editor
+
+Gjer magien din i 'DudesResource.java'
+
+Litt eksempelkode i 'JongoResource.java' og 'MongoResource.java'
+
+---
+
+# Indeksering
+
+## TODO: Ganske uferdige greier
+Kjapt eksempel på effekta av indeksering...
+
+Hiv inn haugevis av data:
+\\
+// src/main/js/4-generate-dudes.js
+// TODO: Vurder å paste inn kode...
+\\
+
+
+\\
+> var query = { skill: { $gt: 7000 }, name: /Java/ };
+> db.dudes.find().limit(2);
+> db.system.indexes.find();
+// Vis detaljar om køyring av find-metoden
+> db.dudes.find( query ).explain();
+\\
+
+Opprett indeks og vis detaljar på nytt
+\\
+> db.dudes.ensureIndex(
+  {??: ??}
+);
+> db.dudes.find( query ).explain();
+\\
 
 # Ressursar
 
@@ -336,20 +389,4 @@ Jongo (Java+Mongo)
 
 Dropwizard
 - http://dropwizard.codahale.com/
-
-
-
----
-# Applikasjon, huskeliste
-
-Todo:
-x generell resource
-x koble til mongodb-basa
-x hente ut data vha rest-kall
-X sjekke om der e data i basa...
-- populere databasa (python?)
-- mappe json til objekt?
-
-- legg til kallenavn...
----
 

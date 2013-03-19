@@ -6,3 +6,6 @@ Commands to get the server running:
 $ mongo
 - build and start the server
 $ ./build-and-start-server.sh
+
+Presentation:
+- slidifier.com/slidifier.html?id=8wtKRCSsUa
