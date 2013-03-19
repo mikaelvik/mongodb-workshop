@@ -24,6 +24,9 @@ $ mongod & # start server i bakgrunn
 $ mongo workshop # start klient mot databasa 'workshop'
 \\
 
+Presentasjonen ligg her:
+- slidifier.com/slidifier.html?id=8wtKRCSsUa
+
 ---
 
 # Stikkord
@@ -78,8 +81,10 @@ Spesial-typar:
 # Opprette data
 
 På tide å faktisk opprette og spørre mot data, sjekk filene:
-- src/js/insert-dudes.js
-- src/js/query-dudes.js
+- src/js/1-insert-dudes.js
+- src/js/2-query-dudes.js
+- src/js/3-update-dudes.js
+- src/js/4-generate-dudes.js
 
 Legg inn eit innslag (samme som printa på forrige slide..)
 \\
@@ -138,7 +143,7 @@ function (obj, _allow_dot) {
 
 Stress å skrive json, lag ein funksjon:
 \\
-// src/main/js/insert-dudes.js
+// src/main/js/1-insert-dudes.js
 > function insertDude(name, skill, employed_since, famous_for, info) {
   db.dudes.insert({
     name: name,
@@ -157,7 +162,7 @@ Legg inn fleire dudes
   "Mikael Vik", 667, "2006-06-13", ["Sunnmøring", "Python", "Americana"], {branch: "Tech", group: "NoSQL"}
 );
 > insertDude(
-  "Ketil Velle", 6200, "1982-03-03", ["Sunnmøring", "Konsertgjengar"], {branch: "Tech", group: "NoSQL"}
+  "Ketil Velle", 6200, "1982-03-03", ["Bekk", "Sunnmøring", "Konsertgjengar"], {branch: "Tech", group: "NoSQL"}
 );
 > insertDude(
   "Olav Folkestad", 666666, "2000-01-01", ["Sjef", "Bekk Band"]
@@ -170,32 +175,151 @@ Legg inn fleire dudes
 
 Kan sjølvsagt spørre vha id
 \\
-// src/main/js/query-dudes.js
-db.dudes.find({ "_id" : ObjectId("4d0ada1fbb30773266f39fe4") })
+// src/main/js/2-query-dudes.js
+> db.dudes.find({ "_id" : ObjectId("4d0ada1fbb30773266f39fe4") })
 \\
 
 Meir interessant
 \\
 // Match på fleire felt
-db.dudes.find({
+> db.dudes.find({
   name: /i/,
   skill : { $gt: 1000 }
 });
 // Inkluder/utelukk felt
-db.dudes.find(
+> db.dudes.find(
   { name: /i/, skill : { $gt : 1000 } },
   { _id: 0, name: 1, skill: 1, info: 1}
 );
 // Kriterier vha objekt
-var skill_range = {};
-skill_range['$gt'] = 667;
-skill_range['$lt'] = 100000;
-db.dudes.find({skill: skill_range}, {_id: 0, name: 1});
+> var skill_range = {};
+> skill_range['$gt'] = 667;
+> skill_range['$lt'] = 100000;
+> db.dudes.find({skill: skill_range}, {_id: 0, name: 1});
 \\
 
 ---
 
+# Grav litt djupare
+
+\\
+> var dd = db.dudes;
+> var fields = {_id: 0, name: 1, skill: 1, famous_for: 1, info: 1};
+
+// Eksakt treff
+> dd.find({famous_for: "Sunnmøring"}, fields);
+
+// Delvis treff
+> dd.find({famous_for: /Bekk/}, fields);
+
+// Alle
+> dd.find({famous_for: { $all: ["Sunnmøring", "Bekk"]}}, fields);
+
+// Subdokument
+> dd.find({"info.branch": "Tech"}, fields);
+> dd.find({"info.branch": "Tech", "info.group": "NoSQL" }, fields);
+
+// Boolske operatorar
+> dd.find(
+  { $or : [
+    { famous_for: "Konsertgjengar" },
+    {skill : { $gt: 10000 } }
+  ] },
+  fields
+);
+\\
+---
+
+# Endre og legge til data
+
+Endring av eksisterande data må gjerast vha operatorar
+
+Inkrementer skills pga mongodb-kunnskap
+\\
+// src/main/js/3-update-dudes.js
+> db.dudes.update(
+  { name: /Mikael/ },
+  { $inc: {skill: 500} }
+);
+\\
+
+Legg til programmerings-språk under info
+\\
+// Feil, vil endre/slette heile det eksisterande dokumentet...
+> db.dudes.update( {name: "Mikael Vik"}, {"info.languages": []} );
+
+// Må bruke '$set'-operatoren
+> db.dudes.update(
+  {name: "Mikael Vik"},
+  { $set:
+    {"info.languages": [
+      {name: "Java", knows: true},
+      {name: "Cobol", knows: false}
+    ] }
+  }
+);
+
+> db.dudes.find({name: /M/});
+\\
+---
+
+# Grav endå litt djupare
+
+Korleis finne ein programmerar som kan java godt?
+\\
+// Ikkje sånn
+> dd.find({
+  "info.languages.name": "Java",
+  "info.languages.knows": true
+});
+\\
+
+Må sørge for at treffa matchar for samme element
+
+\\
+// Men sånn, vha $elemMatch
+dd.find({
+  "info.languages": {
+    $elemMatch: {
+      name: "Java",
+      knows: true
+    }
+  }
+});
+\\
+
+---
+
+# Korleis referere til andre dokument
+
+Her viser eg kun teorien bak med eit enkelt eksempel...
+Mongo er ikkje bygd for å utføre joins
+Når ein likevel har behov for å gjere det er det anbefalt å gjere det slik:
+
+\\
+// Konstruksjon for referanse
+{ $ref: "collection_name", $id: "reference_id }
+
+// Oppdater dokument
+db.dudes.update(
+  { name: /Mikael/ },
+  { $set: { county: { $ref: "counties", $id: "mr" } } }
+);
+
+// Hent ut eit dokument
+var mikael = db.towns.find( { name: /Mikael/ } );
+
+// Om du veit kva collections som er referert:
+db.counties.findOne( { _id: mikael.county.$id } );
+// Hent referert dokument vha JavaScript:
+db[ mikael.county.$ref ].findOne({ _id: mikael.county.$id });
+\\
+---
+
 # Ressursar
+
+Seven Databases in Seven Weeks
+- http://pragprog.com/book/rwdata/seven-databases-in-seven-weeks
 
 Workshop-kode
 - https://github.com/mikaelvik/mongodb-workshop
@@ -203,11 +327,11 @@ Workshop-kode
 MongoDB
 - http://docs.mongodb.org/manual/
 
+Jongo (Java+Mongo)
+- http://jongo.org/
+
 Dropwizard
 - http://dropwizard.codahale.com/
-
-Jongo
-- http://jongo.org/
 
 
 
