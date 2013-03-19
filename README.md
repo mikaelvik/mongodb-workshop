@@ -8,4 +8,4 @@ $ mongo
 $ ./build-and-start-server.sh
 
 Presentation:
-- (slidifier.com/slidifier.html?id=8wtKRCSsUa "Hosted at Slidifier")
+- [Hosted at Slidifier](slidifier.com/slidifier.html?id=8wtKRCSsUa )
