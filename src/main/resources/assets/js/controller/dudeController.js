@@ -59,10 +59,13 @@ define(['jquery', 'underscore'], function($, _, when) {
                 $(dudeElement).empty();
 
                 var query = $(this).find('input').val();
-                fetchFilteredDudes(query).then(function(items) {
-                    // TODO: Add info like you want...
-                    _.each(items, function(item) {
-                        $(dudeElement).append(item);
+                fetchFilteredDudes(query).then(function(response) {
+                     _.each(response, function(items) {
+                        // TODO: Add info like you want...
+                        _.each(items, function(item) {
+                             $(dudeElement).append(item).append(';');
+                        });
+                        $(dudeElement).append('<br/>');
                     });
                 });
             });
