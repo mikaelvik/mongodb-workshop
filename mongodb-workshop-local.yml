@@ -3,3 +3,4 @@ mongoPort: 27017
 
 http:
   rootPath: /rest/*
+  shutdownGracePeriod: 0s
