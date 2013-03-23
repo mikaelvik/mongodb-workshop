@@ -50,8 +50,10 @@ public class MongoResource {
     }
 
     @GET
-    @Path("/query/{dbname}/{collection}")
-    public List<DBObject> collectionQuery(@PathParam("dbname") String db, @PathParam("collection") String coll, @QueryParam("name") String name) {
+    @Path("/search/{dbname}/{collection}")
+    public List<DBObject> collectionQuery(@PathParam("dbname") String db,
+                                          @PathParam("collection") String coll,
+                                          @QueryParam("name") String name) {
         DBCollection col = mongoClient.getDB(db).getCollection(coll);
         BasicDBObject search = new BasicDBObject();
         search.put("name", name);

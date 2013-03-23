@@ -34,10 +34,12 @@ public class JongoResource extends BasicJongoResource {
     }
 
     @GET
-    @Path("/{dbname}/{collection}/query")
-    public Iterable<Map> collectionQuery(@PathParam("dbname") String db, @PathParam("collection") String coll, @QueryParam("name") String name) {
+    @Path("/{dbname}/{collection}/search")
+    public Iterable<Map> collectionQuery(@PathParam("dbname") String db,
+                                         @PathParam("collection") String coll,
+                                         @QueryParam("q") String q) {
         return collection(db, coll)
-                .find("{name: {$regex: #}}", name)
+                .find("{name: {$regex: #}}", q)
                 .fields(FIELDS_SKIP_ID)
                 .as(Map.class);
     }
