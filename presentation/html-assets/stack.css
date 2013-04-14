@@ -80,6 +80,12 @@ pre {
   background-color: rgba(255, 255, 255, .2);
   margin-left: 20px;
   margin-right: 30px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -o-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -khtml-border-radius: 8px;
+  border-radius: 8px;
 }
 pre, code {
   font-size: .65em;
@@ -224,14 +230,14 @@ i {
 @media
 screen and (max-device-width: 1024px) {
   body {
-    width: 1200px;
+  width: 1200px;
   }
 
   .stack {
-    margin: 30px 0;
+  margin: 30px 0;
   }
 
   .stack {
-    display: block;
+  display: block;
   }
 }
