@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<meta charset="utf-8" xmlns="http://www.w3.org/1999/html">
+<title>MongoDB-workshop</title>
+<link href="html-assets/rainbow/tomorrow-night.css" rel="stylesheet">
+<link href="html-assets/stack.css" rel="stylesheet">
+<body class="overview">
+
+<section>
+    <p class="huge">MongoDB-workshop </p>
+    <footer class="right dimmed">
+        Presentasjon: <a href="mikaelvik.github.io/mongodb-workshop/presentation/index.html">
+        mikaelvik.github.io/mongodb-workshop/presentation/index.html</a>
+    </footer>
+</section>
+
+<section>
+    <h1>Agenda  NoSQL 2013-03-19</h1>
+    <ul>
+      <li>Kjapp intro</li>
+      <ul>
+        <li>Neste slide...</li>
+      </ul>
+      <li>Workshopping</li>
+      <ul>
+        <li>Løre basics vha REPL-workout</li>
+        <li>Java-køding</li>
+      </ul>
+    </ul>
+
+    <p>Start med:</p>
+    <pre class="big"><code data-language="shell"># Hent ned kode
+$ git clone https://github.com/mikaelvik/mongodb-workshop
+
+# Fyre opp mongo
+$ mongod & # start server i bakgrunn
+$ mongo workshop # start klient mot databasa 'workshop' </code></pre>
+</section>
+
+<section>
+    <h1>Stikkord</h1>
+    <blockquote>
+        "MongoDB (from "humongous") is a scalable, high-performance, open source NoSQL database. Written in C++"
+    </blockquote>
+
+    <p>Funksjonalitet (fritt oversatt, nesten til norsk)</p>
+    <ul class="small">
+      <li>Dokument-orientert; JSON (BSON), dynamiske skjema, nøsting</li>
+      <li>Full indeks-støtte; indeksér på akkurat det du vil</li>
+      <li>Replikering og høg tilgjengelighet (over LAN eller WAN)</li>
+      <li>Auto-sharding; skaler horisontalt uten å tenke på funksjonalitet</li>
+      <li>Spørrespråk; rike dokument-baserte spørringar</li>
+      <li>Raske oppdateringar, in-place, automatiske modifiers</li>
+      <li>Map/Reduce; fleksibel aggregering og data-prosessering</li>
+    </ul>
+
+    <p>Mellom anna brukt av:<br/>
+    - FourSquare, CERN, Craigslist, Disney, MTV Networks, SAP, EA</p>
+</section>
+
+<section>
+  <h1>Dokument-format</h1>
+  <p>Om du gløymte det tidlegare:</p>
+  <pre><code data-language="shell">$ git clone https://github.com/mikaelvik/mongodb-workshop
+$ mongod & # start server i bakgrunn
+$ mongo workshop # start klient mot databasa 'workshop' </code> </pre>
+
+  <p>Gitt at vi allereie har oppretta data:</p>
+  <pre ><code data-language="shell">$ mongo workshop
+> printjson( db.dudes.findOne({name: /^A/}) )
+{
+  "_id" : ObjectId("5140636769a3b73b5d997e99"),
+  "name" : "Andreas Heim",
+  "skill" : 4300,
+  "employed_since" : ISODate("2008-01-31T00:00:00Z"),
+  "famous_for" : [
+    "Bekk Band", "Medmenneske", "RoboCup"
+  ],
+  "info" : {
+  	"seniority" : "Akkurat passe",
+  	"branch" : "Tech",
+  	"group" : "NoSQL"
+  }
+}</code> </pre>
+  <p class="small">JSON, nøsting av dokument i dokument (info)</p>
+  <p class="small">ObjectId(...), timestamp, maskinId, processId, tellar</p>
+</section>
+
+<section>
+  <h1>Opprette data</h1>
+  <p>På tide å faktisk opprette og spørre mot data, sjekk filene:</p>
+  <ul class="smaller">
+    <li>src/js/1-insert-dudes.js</li>
+    <li>src/js/2-query-dudes.js</li>
+    <li>src/js/3-update-dudes.js</li>
+    <li>src/js/4-generate-dudes.js</li>
+  </ul>
+  <p>Legg inn eit innslag (samme som vart printa på forrige slide..)</p>
+  <pre><code data-language="javascript">> db.dudes.insert({
+  "name" : "Andreas Heim",
+  "skill" : 4300,
+  "employed_since" : ISODate("2008-01-31T00:00:00Z"),
+  "famous_for" : [
+    "Bekk Band", "Medmenneske", "RoboCup"
+  ],
+  "info" : {
+    "seniority" : "Akkurat passe",
+    "branch" : "Tech",
+    "group" : "NoSQL"
+  }); </code> </pre>
+  <p class="dimmed">
+    Tungvint og verbost å måtte gjenta heile json-strukturen for kvar insert (ha tålmod...)
+  </p>
+</section>
+
+<section>
+  <h1>Data-typar og inspeksjon</h1>
+  <p>Informasjon og utforsking</p>
+  <pre><code data-language="javascript">> show collections
+> db.dudes.count()
+> db.dudes.help()
+> db.dudes #... </code></pre>
+  <p>Javascript...</p>
+  <pre><code data-language="javascript">> typeof db
+object
+> typeof db.dudes
+object
+> typeof db.dudes.insert
+function</code></pre>
+  <p>Sjekk implementasjon ved å angi funksjon uten parantesar (som i Python)</p>
+  <pre><code data-language="javascript">> db.dudes.insert
+function (obj, _allow_dot) {
+if (!obj) {
+  throw "no object passed to insert!";
+}
+...</code></pre>
+</section>
+
+<section>
+    <h1>Legg inn meir data...</h1>
+<p>Stress å skrive json, lag ein funksjon:</p>
+    <pre><code data-language="javascript">// src/main/js/1-insert-dudes.js
+> function insertDude(name, skill, employed_since, famous_for, info) {
+  db.dudes.insert({
+    name: name,
+    skill: skill,
+    employed_since: ISODate(employed_since),
+    famous_for: famous_for,
+    info: info
+  });
+}
+> insertDude # for å inspisere...</code></pre>
+
+    <p>Legg inn fleire dudes</p>
+    <pre><code data-language="javascript">> insertDude(
+  "Mikael Vik", 667, "2006-06-13", ["Sunnmøring", "Python", "Americana"], {branch: "Tech", group: "NoSQL"}
+);
+> insertDude(
+  "Ketil Velle", 6200, "1982-03-03", ["Bekk", "Sunnmøring", "Konsertgjengar"], {branch: "Tech", group: "NoSQL"}
+);
+> insertDude(
+  "Olav Folkestad", 666666, "2000-01-01", ["Sjef", "Bekk Band"]
+);</code></pre>
+</section>
+
+<section>
+    <h1> Spørringar og uthenting av data </h1>
+    <p> Kan sjølvsagt spørre vha id </p>
+    <pre><code data-language="javascript">// src/main/js/2-query-dudes.js
+> db.dudes.find({ "_id" : ObjectId("4d0ada1fbb30773266f39fe4") }) </code></pre>
+    <p> Meir interessant </p>
+    <pre><code data-language="javascript">// Match på fleire felt
+> db.dudes.find({
+  name: /i/,
+  skill : { $gt: 1000 }
+}); </code></pre>
+
+    <pre><code data-language="javascript">// Inkluder/utelukk felt
+> db.dudes.find(
+  { name: /i/, skill : { $gt : 1000 } },
+  { _id: 0, name: 1, skill: 1, info: 1}
+); </code></pre>
+
+    <pre><code data-language="javascript">// Kriterier vha objekt
+> var skill_range = {};
+> skill_range['$gt'] = 667;
+> skill_range['$lt'] = 100000;
+> db.dudes.find({skill: skill_range}, {_id: 0, name: 1}); </code></pre>
+</section>
+
+<section>
+    <h1>Grav litt djupare</h1>
+    <pre><code data-language="javascript">> var dd = db.dudes;
+> var fields = {_id: 0, name: 1, skill: 1, famous_for: 1, info: 1};
+
+// Eksakt treff
+> dd.find({famous_for: "Sunnmøring"}, fields);
+
+// Delvis treff
+> dd.find({famous_for: /Bekk/}, fields);
+
+// Alle
+> dd.find({famous_for: { $all: ["Sunnmøring", "Bekk"]}}, fields);
+
+// Subdokument
+> dd.find({"info.branch": "Tech"}, fields);
+> dd.find({"info.branch": "Tech", "info.group": "NoSQL" }, fields);
+
+// Boolske operatorar
+> dd.find(
+  { $or : [
+    { famous_for: "Konsertgjengar" },
+    { skill : { $gt: 10000 } }
+  ] },
+  fields
+);</code></pre>
+</section>
+
+<section>
+    <h1>Oppgåve-løysing #1</h1>
+
+    <p>Sjekk dokumentasjon for operatorar</p>
+    <ul><li><a href="http://docs.mongodb.org/manual/reference/operator/">
+        http://docs.mongodb.org/manual/reference/operator/
+    </a></li></ul>
+
+    <p>Oppgåver:</p>
+    <ul>
+        <li>finne dudes utan info</li>
+        <li>finne dudes som er famous_for et eller anna med Bekk</li>
+        <li>ikkje vise namn og info</li>
+        <li>TODO</li>
+    </ul>
+</section>
+
+<section>
+    <h1>Endre og legge til data</h1>
+    <p>Endring av eksisterande data må gjerast vha operatorar</p>
+
+    <p>Inkrementer skills pga mongodb-kunnskap</p>
+    <pre><code data-language="javascript">// src/main/js/3-update-dudes.js
+> db.dudes.update(
+  { name: /Mikael/ },
+  { $inc: {skill: 500} }
+); </code></pre>
+
+    <p> Legg til programmerings-språk under info</p>
+    <pre><code data-language="javascript">// FEIL, vil endre/slette heile det eksisterande dokumentet...
+> db.dudes.update( {name: "Mikael Vik"}, {"info.languages": []} );
+
+// RIKTIG, må bruke '$set'-operatoren
+> db.dudes.update(
+  { name: "Mikael Vik"},
+  { $set:
+    {"info.languages": [
+      { name: "Java", knows: true },
+      { name: "Cobol", knows: false }
+    ] }
+  }
+);
+
+> db.dudes.find({name: /M/});
+...</code></pre>
+</section>
+
+<section>
+  <h1>Oppgåve-løysing #2</h1>
+  <p>Sjekk dokumentasjon for operatorar</p>
+  <ul><li><a href="http://docs.mongodb.org/manual/reference/operator/">
+      http://docs.mongodb.org/manual/reference/operator/
+  </a></li></ul>
+
+  <p>Oppgåver:</p>
+  <ul>
+    <li>finne en dude som har languages</li>
+    <li>finne alle som kan programmeringsspråket Java godt</li>
+    <li>bruk $elemMatch</li>
+    <li>TODO</li>
+  </ul>
+</section>
+
+<section>
+    <h1>Grav endå litt djupare</h1>
+
+    <p>Korleis finne ein programmerar som kan Java godt?</p>
+    <pre><code data-language="javascript">// Ikkje sånn
+> dd.find({
+  "info.languages.name": "Java",
+  "info.languages.knows": true
+}); </code></pre>
+
+    <p>Dette gir treff for alle som:</p>
+    <ul class="small">
+        <li>har Java som språk, og</li>
+        <li>kan eit språk godt...</li>
+    </ul>
+
+    <p>Må sørge for at treffa matchar for <strong>samme element</strong></p>
+    <pre class="big"><code data-language="javascript">// Men sånn, vha $elemMatch
+dd.find({
+  "info.languages": {
+    $elemMatch: {
+      name: "Java",
+      knows: true
+    }
+  }
+}); </code></pre>
+</section>
+
+<section>
+    <h1>Korleis referere til andre dokument</h1>
+    <p class="lead">Teoretisk eksempel</p>
+    <ul>
+        <li>Her viser eg kun teorien bak med eit enkelt eksempel... </li>
+        <li>Mongo er ikkje bygd for å utføre joins </li>
+        <li>Når ein likevel har behov for å gjere det er det anbefalt å gjere det slik:</li>
+    </ul>
+
+    <pre class="big"><code data-language="javascript">// Konstruksjon for referanse
+{ $ref: "collection_name", $id: "reference_id" }
+
+// Oppdater dokument
+> db.dudes.update(
+  { name: /Mikael/ },
+  { $set: { county: { $ref: "counties", $id: "mr" } } }
+);
+
+// Hent ut eit dokument
+> var mikael = db.towns.find( { name: /Mikael/ } );
+
+// Om du veit kva collections som er referert:
+> db.counties.findOne( { _id: mikael.county.$id } );
+// Hent referert dokument vha JavaScript:
+> db[ mikael.county.$ref ].findOne({ _id: mikael.county.$id }); </code></pre>
+</section>
+
+<section>
+    <h1>Dropwizard</h1>
+
+    <p>Oppgåver:</p>
+    <ul>
+      <li>DW #1: uthenting av alle 'dudes'</li>
+      <li>DW #2: uthenting av dudes vha filtrering</li>
+      <li>DW #3: persistering av dude</li>
+    </ul>
+
+    <p>Fyr opp applikasjonen mongodb-workshop</p>
+    <pre class="big"><code data-language="javascript">$ ./build-and-start-server.sh
+# mvn package && java -jar target/mongodb-tutorial-1.0-SNAPSHOT.jar server mongodb-workshop-local.yml
+# for restart: Ctrl+C, Ctrl+P, &lt;enter> (uten å vente)</code></pre>
+
+    <p>Gjer følgande:</p>
+    <ul>
+      <li>Gå til <a href="localhost:8080/index.html">localhost:8080/index.html</a></li>
+      <li>Åpne prosjektet i din favoritt-editor</li>
+      <li>Gjer magien din i 'DudesResource.java'</li>
+      <li>Litt eksempelkode i 'JongoResource.java' og 'MongoResource.java'</li>
+    </ul>
+</section>
+
+<section>
+    <h1>Indeksering</h1>
+
+    <p>TODO: Ganske uferdige greier<br/>
+    Kjapt eksempel på effekta av indeksering...</p>
+
+    <p>Hiv inn haugevis av data:</p>
+    <pre><code data-language="javascript">// src/main/js/4-generate-dudes.js
+// TODO: Vurder å paste inn kode... </code></pre>
+
+    <pre><code data-language="javascript">> var query = { skill: { $gt: 7000 }, name: /Java/ };
+> db.dudes.find().limit(2);
+> db.system.indexes.find();
+// Vis detaljar om køyring av find-metoden
+> db.dudes.find( query ).explain(); </code></pre>
+
+    <p>Opprett indeks og vis detaljar på nytt</p>
+    <pre><code data-language="javascript">> db.dudes.ensureIndex(
+  {??: ??}
+);
+> db.dudes.find( query ).explain(); </code></pre>
+</section>
+
+<section>
+  <h1>Ressursar</h1>
+  <p><a href="http://pragprog.com/book/rwdata/seven-databases-in-seven-weeks">
+    Seven Databases in Seven Weeks
+  </a></p>
+  <p><a href="https://github.com/mikaelvik/mongodb-workshop">
+    Workshop-kode
+  </a></p>
+  <p><a href="http://docs.mongodb.org/manual/">
+    MongoDB
+  </a></p>
+  <p><a href="http://jongo.org/">
+    Jongo (Java+Mongo)
+  </a></p>
+  <p><a href="http://dropwizard.codahale.com/">
+    Dropwizard
+  </a></p>
+  <footer class="right"><a href="http://github.com/mikaelvik">
+    Mikael Vik (mikael.vik@gmail.com)
+  </a></footer>
+
+</section>
+
+
+<script src="html-assets/d3.v2.js?2.7.3"></script>
+<script src="html-assets/stack.v0.js"></script>
+<script src="html-assets/rainbow/rainbow.js"></script>
+<script src="html-assets/rainbow/generic.js"></script>
+<script src="html-assets/rainbow/java.js"></script>
+<script src="html-assets/rainbow/shell.js"></script>
+</body>
