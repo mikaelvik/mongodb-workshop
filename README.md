@@ -8,4 +8,4 @@ $ mongo
 $ ./build-and-start-server.sh
 
 Presentation:
-- [Hosted at Slidifier](http://slidifier.com/slidifier.html?id=8wtKRCSsUa )
+- [Hosted at GitHub](http://mikaelvik.github.io/mongodb-workshop/presentation/index.html)
